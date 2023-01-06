@@ -4,7 +4,7 @@
 
 <h3> Screen Shots </h3>
 
-![Alt text](https://drive.google.com/file/d/1OgKQCzhlc9Bcr3-bnbOBuEBV3IQULggv/view?usp=share_link "Screen 1")
+![Alt text](./assets/ss/ss1.jpg "Optional title")
 
 
 #### Made with ❤ by [@nittinsharma37](https://github.com/nittinsharma37)
