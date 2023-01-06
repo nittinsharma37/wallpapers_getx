@@ -1,10 +1,11 @@
 
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../model/catogeriesModel.dart';
 
 //pexels api key here
-String apiKey = "563492ad6f91700001000001e61981db533546788e2173c6362e3049";
+String apiKey = dotenv.env['API_KEY']!;
 
 List<CatogeriesModel> getCatogeries() {
   //////////////////////////////
