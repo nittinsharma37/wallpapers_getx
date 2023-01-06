@@ -13,6 +13,7 @@ class WallPapersAssign extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return  GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: "FinPaisa",
       defaultTransition: Transition.rightToLeft,
       home:  MainScreen(),

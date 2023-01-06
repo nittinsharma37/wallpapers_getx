@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wallpapers_getx_assign/helper/widgets/search_widget.dart';
+import 'package:wallpapers_getx_assign/view/imageView.dart';
 
 import '../controller/main_page_controller.dart';
 import '../helper/widgets/catogeriesTile.dart';
@@ -17,6 +18,7 @@ class MainScreen extends StatelessWidget {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
@@ -62,11 +64,10 @@ class MainScreen extends StatelessWidget {
                       itemBuilder: ((context, index) => GridTile(
                               child: GestureDetector(
                             onTap: () {
-                              // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                              //   return ImageView(
-                              //     imgUrl: photoModel.src!.portrait!,
-                              //   );
-                              // }));
+                           Get.to(ImageView( imgUrl:  mainPageController.photos[index]['src']['original'],));
+                           print( mainPageController.photos[index]);
+                           print( mainPageController.photos[index]['src']['original']);
+                              
                             },
                             child: Hero(
                               tag: mainPageController.photos[index]['src']

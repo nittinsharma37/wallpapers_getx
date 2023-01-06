@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 
 import '../model/catogeriesModel.dart';
-import '../model/photosModel.dart';
 import '../services/static_data.dart';
 
 import 'package:http/http.dart' as http;
@@ -27,7 +27,6 @@ class MainPageController extends GetxController
       photos.clear();
       await getTrendingWallpaper();
     } else {
-
       photos.clear();
       await http.get(
           Uri.parse(
@@ -41,7 +40,6 @@ class MainPageController extends GetxController
         print(photos);
         print(photos.length);
       });
-
     }
   }
 
@@ -91,6 +89,22 @@ class MainPageController extends GetxController
       }
     }
     return false;
+  }
+
+  savePhoto({required String imageUrl}) async {
+    var saveResult = await GallerySaver.saveImage(imageUrl);
+
+    print("save response ---- $saveResult");
+
+    if (saveResult == true) {
+      Get.snackbar("Image Saved", "Image has been saved to gallery !",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.black.withOpacity(0.7),
+          colorText: Colors.white,
+          borderRadius: 20,
+          margin: const EdgeInsets.all(20),
+          duration: const Duration(seconds: 3));
+    }
   }
 
   /// The `onInit()` function is called when the `State` is first created
