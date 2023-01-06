@@ -15,6 +15,12 @@ List<CatogeriesModel> getCatogeries() {
 
   catogeriesModel.catogeriesUrl =
       "https://images.pexels.com/photos/96381/pexels-photo-96381.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
+  catogeriesModel.catogeriesName = "All";
+  catogeries.add(catogeriesModel);
+  catogeriesModel = CatogeriesModel();
+
+  catogeriesModel.catogeriesUrl =
+      "https://images.pexels.com/photos/96381/pexels-photo-96381.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
   catogeriesModel.catogeriesName = "Abstract";
   catogeries.add(catogeriesModel);
   catogeriesModel = CatogeriesModel();

@@ -16,47 +16,82 @@ class MainPageController extends GetxController
 
   List<CatogeriesModel> catModel = [];
 
-  RxList<PhotosModel> photos = <PhotosModel>[].obs;
-
+  RxList photos = [].obs;
+  RxInt selectedCategory = 0.obs;
   RxInt noOfPage = 1.obs;
 
   late ScrollController controller;
 
+  getCategoriesWallpaper({required String categoryName}) async {
+    if (categoryName == "All") {
+      photos.clear();
+      await getTrendingWallpaper();
+    } else {
+
+      photos.clear();
+      await http.get(
+          Uri.parse(
+              '''https://api.pexels.com/v1/search?query=${categoryName}&per_page=24&page=$noOfPage'''),
+          headers: {"Authorization": apiKey}).then((value) {
+        print(value.statusCode);
+
+        Map<String, dynamic> jsonData = jsonDecode(value.body);
+        print(jsonData);
+        photos.addAll(jsonData['photos']);
+        print(photos);
+        print(photos.length);
+      });
+
+    }
+  }
+
+  getSearchWallpaper() async {
+    print("text field value ---- ${searchImageController.text}");
+    if (searchImageController.text.length == 0) {
+      photos.clear();
+      await getTrendingWallpaper();
+    } else {
+      photos.clear();
+      await http.get(
+          Uri.parse(
+              '''https://api.pexels.com/v1/search?query=${searchImageController.text}&per_page=24&page=$noOfPage'''),
+          headers: {"Authorization": apiKey}).then((value) {
+        print(value.statusCode);
+
+        Map<String, dynamic> jsonData = jsonDecode(value.body);
+        print(jsonData);
+        photos.addAll(jsonData['photos']);
+        print(photos);
+        print(photos.length);
+      });
+    }
+  }
+
   getTrendingWallpaper() async {
     await http.get(
         Uri.parse(
-            "https://api.pexels.com/v1/curated?per_page=10&page=$noOfPage"),
+            '''https://api.pexels.com/v1/curated?query${searchImageController.text}=per_page=24&page=$noOfPage'''),
         headers: {"Authorization": apiKey}).then((value) {
       print(value.statusCode);
 
       Map<String, dynamic> jsonData = jsonDecode(value.body);
-      jsonData["photos"].forEach((element) {
-        // print(element);
-        PhotosModel photosModel = PhotosModel();
-        photosModel = PhotosModel.fromMap(element);
-        photos.add(photosModel);
-      });
-
+      print(jsonData);
+      photos.addAll(jsonData['photos']);
       print(photos);
       print(photos.length);
-
-      update();
     });
   }
 
-
-
   bool handleScrollNotification(ScrollNotification notification) {
-  if (notification is ScrollEndNotification) {
-    if (controller.position.extentAfter == 0) {
-      print("have to load more");
-      noOfPage.value++;
-      getTrendingWallpaper();
+    if (notification is ScrollEndNotification) {
+      if (controller.position.extentAfter == 0) {
+        print("have to load more");
+        noOfPage.value++;
+        getTrendingWallpaper();
+      }
     }
+    return false;
   }
-  return false;
-}
-
 
   /// The `onInit()` function is called when the `State` is first created
   @override

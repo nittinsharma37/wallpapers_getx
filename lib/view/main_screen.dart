@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,7 +6,6 @@ import 'package:wallpapers_getx_assign/helper/widgets/search_widget.dart';
 
 import '../controller/main_page_controller.dart';
 import '../helper/widgets/catogeriesTile.dart';
-import '../helper/widgets/wallpaper.dart';
 
 class MainScreen extends StatelessWidget {
   MainScreen({Key? key}) : super(key: key);
@@ -16,53 +16,85 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          "Wallpapers",
+          style: TextStyle(color: Colors.black87),
+        ),
+      ),
       body: Column(
         children: [
           const SizedBox(
             height: 20,
           ),
-          searchWidget(context, mainPageController.searchImageController),
+          searchWidget(context, mainPageController.searchImageController, mainController: mainPageController, onTap: (){
+            mainPageController.getSearchWallpaper();
+          }),
           const SizedBox(
             height: 20,
           ),
-          SizedBox(
-            height: 100,
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              itemCount: mainPageController.catModel.length,
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                return CatogeriesTile(
-                  catogeriesName:
-                      mainPageController.catModel[index].catogeriesName,
-                  imageUrl: mainPageController.catModel[index].catogeriesUrl,
-                );
-              },
-            ),
-          ),
+          CatogeriesTile(),
           Expanded(
             child: Obx(() => mainPageController.photos.isEmpty
-                ? Container(
-                    height: MediaQuery.of(context).size.height * 0.70,
-                    child: Center(
+                ? SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.80,
+                    child: const Center(
                       child: CircularProgressIndicator(),
-                    ))
+                    ),)
                 : NotificationListener<ScrollNotification>(
-                  onNotification: (notification){
-                    return mainPageController.handleScrollNotification(notification);
-                  },
-           
-                  child: ListView.builder(
-                      itemCount: mainPageController.photos.length,
-                      shrinkWrap: true,
+                    onNotification: (notification) {
+                      return mainPageController
+                          .handleScrollNotification(notification);
+                    },
+                    child: GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        mainAxisSpacing: 6.0,
+                        crossAxisSpacing: 6.0,
+                        crossAxisCount: 3,
+                      ),
                       controller: mainPageController.controller,
-                      // physics: const ClampingScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return wallPaper(
-                            wallPhoto: mainPageController.photos, context: context);
-                      }),
-                )),
+                      physics: const BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(4.0),
+                      itemCount: mainPageController.photos.length,
+                      itemBuilder: ((context, index) => GridTile(
+                              child: GestureDetector(
+                            onTap: () {
+                              // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              //   return ImageView(
+                              //     imgUrl: photoModel.src!.portrait!,
+                              //   );
+                              // }));
+                            },
+                            child: Hero(
+                              tag: mainPageController.photos[index]['src']
+                                  ['tiny'],
+                              child: Container(
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: kIsWeb
+                                        ? Image.network(
+                                            mainPageController.photos[index]
+                                                ['src']['tiny'],
+                                            height: 50,
+                                            width: 100,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : CachedNetworkImage(
+                                            imageUrl: mainPageController
+                                                .photos[index]['src']['tiny'],
+                                            placeholder: (context, url) =>
+                                                Container(
+                                                  color: Color(0xfff5f8fd),
+                                                ),
+                                            fit: BoxFit.cover)),
+                              ),
+                            ),
+                          ))),
+                    ),
+                  )),
           ),
           SizedBox(height: screenSize.height * 0.02),
         ],
@@ -70,7 +102,6 @@ class MainScreen extends StatelessWidget {
     );
   }
 }
-
 
 class MyHome extends StatefulWidget {
   @override

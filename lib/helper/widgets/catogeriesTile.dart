@@ -1,99 +1,84 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../controller/main_page_controller.dart';
 
 class CatogeriesTile extends StatelessWidget {
-  final String? imageUrl, catogeriesName;
+ 
 
-  const CatogeriesTile(
-      {Key? key, required this.imageUrl,required this.catogeriesName})
+  CatogeriesTile(
+      {Key? key})
       : super(key: key);
+
+  final mainPageController = Get.put(MainPageController(), permanent: true);
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // Navigator.push(context, MaterialPageRoute(builder: (context) {
-        //   return CatogeriesScreen(catogeries: catogeriesName!);
-        // }));
-      },
-      child: Container(
-        margin: const EdgeInsets.only(right: 8),
-        child: kIsWeb
-            ? Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: kIsWeb
-                        ? Image.network(
-                            imageUrl!,
-                            height: 50,
-                            width: 100,
-                            fit: BoxFit.cover,
-                          )
-                        : CachedNetworkImage(
-                            imageUrl: imageUrl!,
-                            height: 50,
-                            width: 100,
-                            fit: BoxFit.cover,
+    return SizedBox(
+      height: 100,
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        itemCount: mainPageController.catModel.length,
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              mainPageController.selectedCategory.value = index;
+              mainPageController.getCategoriesWallpaper(categoryName: mainPageController.catModel[index].catogeriesName!);
+            },
+            child: Container(
+              margin: const EdgeInsets.only(right: 8),
+              child: 
+                 Stack(
+                      children: [
+                        ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: kIsWeb
+                                ? Image.network(
+                                    mainPageController.catModel[index].catogeriesUrl!,
+                                    height: 50,
+                                    width: 100,
+                                    fit: BoxFit.cover,
+                                  )
+                                : CachedNetworkImage(
+                                    imageUrl: mainPageController.catModel[index].catogeriesUrl!,
+                                    height: 50,
+                                    width: 100,
+                                    fit: BoxFit.cover,
+                                  )),
+                        Obx(() => Container(
+                          height: 50,
+                          width: 100,
+                          decoration: BoxDecoration(
+                              color: mainPageController.selectedCategory == index ? Colors.red : Colors.black54,
+                              borderRadius: BorderRadius.circular(8)),
+                        ),),
+                        Container(
+                          height: 50,
+                          width: 100,
+                          alignment: Alignment.center,
+                          child: Text(
+                            mainPageController.catModel[index].catogeriesName!,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Container(
-                    width: 100,
-                    alignment: Alignment.center,
-                    child: Text(
-                      catogeriesName!,
-                      style: const TextStyle(
-                        color: Colors.black87,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              )
-            : Stack(
-                children: [
-                  ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: kIsWeb
-                          ? Image.network(
-                              imageUrl!,
-                              height: 50,
-                              width: 100,
-                              fit: BoxFit.cover,
-                            )
-                          : CachedNetworkImage(
-                              imageUrl: imageUrl!,
-                              height: 50,
-                              width: 100,
-                              fit: BoxFit.cover,
-                            )),
-                  Container(
-                    height: 50,
-                    width: 100,
-                    decoration: BoxDecoration(
-                        color: Colors.black54,
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
-                  Container(
-                    height: 50,
-                    width: 100,
-                    alignment: Alignment.center,
-                    child: Text(
-                      catogeriesName!,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            ),
+          );
+          // return CatogeriesTile(
+          //   catogeriesName:
+          //       mainPageController.catModel[index].catogeriesName,
+          //   imageUrl: mainPageController.catModel[index].catogeriesUrl,
+          // );
+        },
       ),
     );
   }
